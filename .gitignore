@@ -1,0 +1,5 @@
+node_modules
+.sync
+package-lock.json
+default
+tutorial*
