@@ -20,6 +20,15 @@ class Repair extends Creep {
         this.target = (damaged.length > 0) ? damaged[0] : null;
     }
 
+    findResource() {
+        this.nullTarget();
+        this.target = this.self.room.storage;
+
+        if (this.target.store.getUsedCapacity(RESOURCE_ENERGY) < this.self.store.getFreeCapacity(RESOURCE_ENERGY)) {
+            super.findResource();
+        }
+    }
+
     repair() {
         // Find a target
         this.findDamagedStructure();

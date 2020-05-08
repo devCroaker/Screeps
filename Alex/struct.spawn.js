@@ -11,9 +11,9 @@ class StructSpawn extends Entity {
     constructor(self) {
         super(self);
 
-        this.runnerFactor = 3;
-        this.maxBuilders = 2;
-        this.maxRepairs = 2;
+        this.runnerFactor = 2;
+        this.maxBuilders = 4;
+        this.maxRepairs = 4;
 
         this._creep = {
             name: null,
@@ -25,8 +25,9 @@ class StructSpawn extends Entity {
         };
 
         this._sources = [];
-
+    
         this._miners = _.filter(Game.creeps, creep => creep.memory.role === 'miner');
+        this._minerWork = _.reduce(this.miners, (total, curr) => total + curr.body.filter((part) => part.type === WORK).length,0);
         this._runners = _.filter(Game.creeps, creep => creep.memory.role === 'runner');
         this._builders = _.filter(Game.creeps, creep => creep.memory.role === 'builder');
         this._repairs = _.filter(Game.creeps, creep => creep.memory.role === 'repair');
@@ -54,6 +55,14 @@ class StructSpawn extends Entity {
 
     set miners(miners) {
         this._miners = miners;
+    }
+
+    get minerWork() {
+        return this._minerWork;
+    }
+
+    set minerWork(minerWork) {
+        this._minerWork = mineminerWorkrs;
     }
 
     get runners() {
@@ -119,7 +128,7 @@ class StructSpawn extends Entity {
 
     getNextCreep() {
 
-        if (this.miners.length < this.sources.length && this.runners >= this.miners) {
+        if (this.minerWork < this.sources.length*5 && this.runners.length >= this.miners.length) {
             this.creep.memory.role = 'miner';
         } else if (this.runners.length < this.sources.length*this.runnerFactor) {
             this.creep.memory.role = 'runner';
@@ -157,7 +166,12 @@ class StructSpawn extends Entity {
     }
     
     spawn() {
-        console.log(`${this.miners.length} harvesters, ${this.runners.length} runners, ${this.builders.length} builders, ${this.repairs.length} repairs`);
+        if (this.creep.role === 'miner' && this.creep.body.length < 2) {
+            console.log('Trying to spawn weird miner');
+            return;
+        }
+
+        console.log(`${this.miners.length} miners, ${this.runners.length} runners, ${this.builders.length} builders, ${this.repairs.length} repairs`);
         let spawn = this.self.spawnCreep(this.creep.body, this.creep.name, {memory: this.creep.memory});
         if (spawn === 0) console.log(`Spawning Creep: ${this.creep.name}`);
         else console.log(spawn);

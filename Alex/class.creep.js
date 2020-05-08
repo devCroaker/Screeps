@@ -63,8 +63,14 @@ class Screep extends Entity {
             this.findResource();
 
             if (this.target) {
-                if(this.self.pickup(this.target) === ERR_NOT_IN_RANGE) {
-                    this.self.moveTo(this.target);
+                if (this.target.structureType) {
+                    if(this.self.withdraw(this.target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                        this.self.moveTo(this.target);
+                    }
+                } else {
+                    if(this.self.pickup(this.target) === ERR_NOT_IN_RANGE) {
+                        this.self.moveTo(this.target);
+                    }
                 }
             } else {
                 this.harvest();

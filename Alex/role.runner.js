@@ -25,7 +25,7 @@ class Runner extends Creep {
             
             this.target = source.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
                 filter: (resource) => {
-                    return resource.amount >= this.self.carryCapacity/2;
+                    return resource.amount >= 50;
                 }
             });
 
