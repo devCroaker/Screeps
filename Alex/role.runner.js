@@ -41,12 +41,17 @@ class Runner extends Creep {
 
     findStorage() {
         this.nullTarget();
-        this.target = this.self.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.store && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-            }
-        });
 
+        let priorityList = [STRUCTURE_SPAWN,STRUCTURE_TOWER,STRUCTURE_EXTENSION,STRUCTURE_CONTAINER,STRUCTURE_STORAGE];
+        for (let priority of priorityList) {
+            this.target = this.self.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType === priority && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
+                }
+            });
+            if (this.target) break;
+        }
+        
         if (!this.target) {
             let creep = this.self.pos.findClosestByPath(FIND_MY_CREEPS, {
                 filter: (creep) => {

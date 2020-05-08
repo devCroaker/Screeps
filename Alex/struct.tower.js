@@ -19,20 +19,22 @@ class StructTower extends Entity {
     attack() {
         let user = this.hostiles[0].owner.username;
         Game.notify(`User ${user} spotted in room ${this.self.room}`);
-
         this.self.attack(this.hostiles[0]);
     }
 
-    heal() {
-        let wounded = this.self.room.find(FIND_MY_CREEPS, {
+    getWounded() {
+        return this.self.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
                 return creep.hits < creep.hitsMax;
             }
         });
+    }
+
+    heal() {
+        let wounded = this.getWounded();
 
         if (wounded.length > 0) {
             wounded.sort((a,b) => a.hits - b.hits);
-
             this.self.heal(wounded[0]);
         }
     }

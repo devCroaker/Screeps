@@ -9,17 +9,15 @@ const Repair = require('role.repair');
 
 module.exports.loop = () => {
     
+    // For Each Spawn
+    for (let spawnId in Game.spawns) {
+        let spawn = new StructSpawn(Game.spawns[spawnId]);
+        spawn.run();
+    }
+
+    // For each room
     for (let room in Game.rooms) {
-
-        // For Each Spawn
-        for (let spawnId in Game.spawns) {
-
-            // Get the Spawn
-            let spawn = new StructSpawn(Game.spawns[spawnId]);
-            spawn.run();
-            
-        }
-
+        // For each Tower in room
         let towers = Game.rooms[room].find(FIND_MY_STRUCTURES, {
             filter: (struct) => {
                 return struct.structureType === STRUCTURE_TOWER;
@@ -32,17 +30,14 @@ module.exports.loop = () => {
         
     }
 
-
     // For Each Creep
     for (let name in Memory.creeps) {
 
         // Delete Creeps from memory if they are dead
         if(!Game.creeps[name]) {
-
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep memory:', name);
         } else {
-
             // Run the Creeps routine
             let creep = Game.creeps[name];
             if(creep.memory.role == 'miner') {
