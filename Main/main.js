@@ -6,36 +6,20 @@ const Runner = require('role.runner');
 const Miner = require('role.miner');
 const Builder = require('role.builder');
 const Repair = require('role.repair');
-const Upgrader = require('role.upgrader');
-
-const Scout = require('role.scout');
 
 module.exports.loop = () => {
     
-    // For Each Spawn
-    for (let spawnId in Game.spawns) {
-        let spawn = new StructSpawn(Game.spawns[spawnId]);
-        spawn.run();
+    for (let room in Game.rooms) {
 
+        // For Each Spawn
+        for (let spawnId in Game.spawns) {
 
-        for (let flag in Game.flags) {
-
-            let scouts = _.filter(Game.creeps, (creep) => creep.memory.role === 'scout');
-            flag = Game.flags[flag];
-    
-            if (flag.color === COLOR_WHITE) {
-                if (_.filter(scouts, (creep) => creep.memory.flag === flag.name)) {
-                    //if (!Game.spawns[spawnId].spawning && Game.spawns[spawnId].store.getUsedCapacity(RESOURCE_ENERGY) > 50) Game.spawns[spawnId].spawnCreep([MOVE], 'scout'+Game.time.toString(),{memory:{role: 'scout', flag: flag.name}})           
-                }
-            }
-    
+            // Get the Spawn
+            let spawn = new StructSpawn(Game.spawns[spawnId]);
+            spawn.run();
+            
         }
 
-    }
-
-    // For each room
-    for (let room in Game.rooms) {
-        // For each Tower in room
         let towers = Game.rooms[room].find(FIND_MY_STRUCTURES, {
             filter: (struct) => {
                 return struct.structureType === STRUCTURE_TOWER;
@@ -48,14 +32,17 @@ module.exports.loop = () => {
         
     }
 
+
     // For Each Creep
     for (let name in Memory.creeps) {
 
         // Delete Creeps from memory if they are dead
         if(!Game.creeps[name]) {
+
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep memory:', name);
         } else {
+
             // Run the Creeps routine
             let creep = Game.creeps[name];
             if(creep.memory.role == 'miner') {
@@ -66,10 +53,6 @@ module.exports.loop = () => {
                 creep = new Builder(creep);
             } else if(creep.memory.role == 'repair') {
                 creep = new Repair(creep);
-            } else if(creep.memory.role == 'upgrader') {
-                creep = new Upgrader(creep);
-            } else if(creep.memory.role == 'scout') {
-                creep = new Scout(creep);
             } else {
                 creep = new Screep(creep);
             }

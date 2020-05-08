@@ -8,7 +8,7 @@ class StructSpawn extends Entity {
         this.runnerFactor = 2;
         this.maxBuilders = 2;
         this.maxRepairs = 2;
-        this.maxUpgraders = 4;
+        this.maxUpgraders = 2;
 
         this._creep = {
             name: null,
@@ -169,7 +169,7 @@ class StructSpawn extends Entity {
     run() {
         if (!this.self.spawning) {
             this.updateSources();
-            if (this.self.room.energyAvailable >= 650 || (this.self.room.energyAvailable >= 300 && this.self.miners < this.self.maxMinerWORK)) {
+            if (this.self.room.energyAvailable >= 650 || (this.self.room.energyAvailable >= 300 && this.self.minersWork < this.sources.length*5)) {
                 this.getNextCreep();
                 if (this.creep.name) this.spawn();
             }
