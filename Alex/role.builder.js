@@ -15,7 +15,7 @@ class Builder extends Creep {
                 this.self.moveTo(this.target);
             }
         } else {
-            this.upgrade();
+            this.recycle();
         }
 
     }

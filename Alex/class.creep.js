@@ -105,6 +105,20 @@ class Screep extends Entity {
 
     }
 
+    recycle() {
+        let spawn = this.self.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType === STRUCTURE_SPAWN;
+            }
+        });
+
+        if (!this.self.pos.isNearTo(spawn)) {
+            this.self.moveTo(spawn);
+        } else {
+            spawn.recycleCreep(this.self);
+        }
+    }
+
     store() {
         // Find a storage structure
         this.findStorage();

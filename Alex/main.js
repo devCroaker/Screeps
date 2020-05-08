@@ -24,8 +24,19 @@ module.exports.loop = () => {
             flag = Game.flags[flag];
     
             if (flag.color === COLOR_WHITE) {
-                if (_.filter(scouts, (creep) => creep.memory.flag === flag.name)) {
-                    //if (!Game.spawns[spawnId].spawning && Game.spawns[spawnId].store.getUsedCapacity(RESOURCE_ENERGY) > 50) Game.spawns[spawnId].spawnCreep([MOVE], 'scout'+Game.time.toString(),{memory:{role: 'scout', flag: flag.name}})           
+                if (_.filter(scouts, (creep) => creep.memory.flag === flag.name).length < 1) {
+
+                    spawn = Game.spawns[spawnId];
+
+                    if (!spawn.spawning && spawn.store.getUsedCapacity(RESOURCE_ENERGY) > 50) {
+                        spawn.spawnCreep([MOVE], 'scout'+Game.time.toString(),{
+                            memory: {
+                                role: 'scout',
+                                flag: flag.name,
+                                spawn: spawn.id
+                            }
+                        });
+                    }           
                 }
             }
     

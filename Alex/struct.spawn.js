@@ -139,7 +139,7 @@ class StructSpawn extends Entity {
             this.creep.memory.role = 'miner';
         } else if (this.runners.length < this.sources.length*this.runnerFactor) {
             this.creep.memory.role = 'runner';
-        } else if (this.builders.length < this.maxBuilders) {
+        } else if (this.builders.length < this.maxBuilders && this.self.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             this.creep.memory.role = 'builder';
         } else if (this.repairs.length < this.maxRepairs) {
             this.creep.memory.role = 'repair';
