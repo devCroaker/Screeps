@@ -167,10 +167,12 @@ class StructSpawn extends Entity {
     }
 
     run() {
-        this.updateSources();
-        if (!this.self.spawning && this.self.room.energyAvailable >= 300) {
-            this.getNextCreep();
-            if (this.creep.name) this.spawn();
+        if (!this.self.spawning) {
+            this.updateSources();
+            if (this.self.room.energyAvailable >= 650 || (this.self.room.energyAvailable >= 300 && this.self.miners < this.self.maxMinerWORK)) {
+                this.getNextCreep();
+                if (this.creep.name) this.spawn();
+            }
         }
     }
     
