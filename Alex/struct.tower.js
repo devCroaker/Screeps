@@ -22,6 +22,19 @@ class StructTower extends Entity {
         this.self.attack(this.hostiles[0]);
     }
 
+    findDamagedStructure() {
+
+        let damaged = this.self.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return ((structure.structureType !== STRUCTURE_WALL && structure.hits < structure.hitsMax) || (structure.structureType === STRUCTURE_WALL && structure.hits < 10000));
+            }
+        });
+
+        damaged.sort((a,b) => a.hits - b.hits);
+
+        return (damaged.length > 0) ? damaged[0] : null;
+    }
+
     getWounded() {
         return this.self.room.find(FIND_MY_CREEPS, {
             filter: (creep) => {
@@ -36,6 +49,11 @@ class StructTower extends Entity {
         if (wounded.length > 0) {
             wounded.sort((a,b) => a.hits - b.hits);
             this.self.heal(wounded[0]);
+        } else {
+            let damaged = this.findDamagedStructure();
+            if (damaged) {
+                this.self.repair(damaged);
+            }
         }
     }
 

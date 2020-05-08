@@ -1,19 +1,14 @@
 const Entity = require('class.entity');
-//const maxHarvesters = require('util.maxHarvesters');
 
-const BUILDERS = 2;
-const REPAIRS = 2;
-const RUNNERFACTOR = 3;
-
-/** @param {Spawn} spawn **/
 class StructSpawn extends Entity {
 
     constructor(self) {
         super(self);
 
         this.runnerFactor = 2;
-        this.maxBuilders = 4;
-        this.maxRepairs = 4;
+        this.maxBuilders = 2;
+        this.maxRepairs = 2;
+        this.maxUpgraders = 4;
 
         this._creep = {
             name: null,
@@ -31,6 +26,7 @@ class StructSpawn extends Entity {
         this._runners = _.filter(Game.creeps, creep => creep.memory.role === 'runner');
         this._builders = _.filter(Game.creeps, creep => creep.memory.role === 'builder');
         this._repairs = _.filter(Game.creeps, creep => creep.memory.role === 'repair');
+        this._upgraders = _.filter(Game.creeps, creep => creep.memory.role === 'upgrader');
     }
 
     get creep() {
@@ -89,17 +85,27 @@ class StructSpawn extends Entity {
         this._repairs = repairs;
     }
 
+    get upgraders() {
+        return this._upgraders;
+    }
+
+    set upgraders(upgraders) {
+        this._upgraders = upgraders;
+    }
+
     buildCreep() {
 
         this.creep.name = this.creep.memory.role + Game.time.toString();
         this.creep.body.push(MOVE);
+
+        let energy = this.self.room.energyAvailable-50;
 
         switch(this.creep.memory.role) {
             case 'miner':
                 let source = this.sources.find(source => source.miners < source.maxMinerWORK);
                 this.creep.memory.source = source.id;
 
-                for (let i = 0; i < Math.floor(this.self.room.energyAvailable/100)-1; i++) {
+                for (let i = 0; i < Math.floor(energy/100); i++) {
                     if ((source.miners + i) >= source.maxMinerWORK ) break;
                     this.creep.body.unshift(WORK);
                 }
@@ -107,15 +113,16 @@ class StructSpawn extends Entity {
             case 'runner':
                 this.creep.memory.source = this.sources.find(source => source.runners < source.maxRunners).id;
 
-                for (let i = 0; i < Math.floor(this.self.room.energyAvailable/100)-1; i++) {
+                for (let i = 0; i < Math.floor(energy/100); i++) {
                     this.creep.body.unshift(CARRY,MOVE);
                     if (this.creep.body.length >= 15) break;
                 }
                 break;
             case 'builder':
             case 'repair':
-                for (let i = 0; i < Math.floor(this.self.room.energyAvailable/150)-1; i++) {
-                    this.creep.body.unshift(WORK,CARRY);
+            case 'upgrader':
+                for (let i = 0; i < Math.floor(energy/200); i++) {
+                    this.creep.body.unshift(WORK,CARRY,MOVE);
                     if (this.creep.body.length >= 15) break;
                 }
                 break;
@@ -136,6 +143,8 @@ class StructSpawn extends Entity {
             this.creep.memory.role = 'builder';
         } else if (this.repairs.length < this.maxRepairs) {
             this.creep.memory.role = 'repair';
+        } else if (this.upgraders.length < this.maxUpgraders) {
+            this.creep.memory.role = 'upgrader';
         }
 
         if (this.creep.memory.role) this.buildCreep();
@@ -159,19 +168,20 @@ class StructSpawn extends Entity {
 
     run() {
         this.updateSources();
-        if (!this.self.spawning) {
+        if (!this.self.spawning && this.self.room.energyAvailable >= 300) {
             this.getNextCreep();
             if (this.creep.name) this.spawn();
         }
     }
     
     spawn() {
-        if (this.creep.role === 'miner' && this.creep.body.length < 2) {
-            console.log('Trying to spawn weird miner');
+        if (this.creep.body.length < 2) {
+            console.log('Trying to spawn weird creep');
             return;
         }
 
-        console.log(`${this.miners.length} miners, ${this.runners.length} runners, ${this.builders.length} builders, ${this.repairs.length} repairs`);
+        console.log(`${this.self.room.storage.store.getUsedCapacity(RESOURCE_ENERGY)} energy stored`)
+        console.log(`${this.miners.length} miners, ${this.runners.length} runners, ${this.builders.length} builders, ${this.repairs.length} repairs, ${this.upgraders.length} upgraders`);
         let spawn = this.self.spawnCreep(this.creep.body, this.creep.name, {memory: this.creep.memory});
         if (spawn === 0) console.log(`Spawning Creep: ${this.creep.name}`);
         else console.log(spawn);

@@ -6,6 +6,7 @@ const Runner = require('role.runner');
 const Miner = require('role.miner');
 const Builder = require('role.builder');
 const Repair = require('role.repair');
+const Upgrader = require('role.upgrader');
 
 module.exports.loop = () => {
     
@@ -48,6 +49,8 @@ module.exports.loop = () => {
                 creep = new Builder(creep);
             } else if(creep.memory.role == 'repair') {
                 creep = new Repair(creep);
+            } else if(creep.memory.role == 'upgrader') {
+                creep = new Upgrader(creep);
             } else {
                 creep = new Screep(creep);
             }

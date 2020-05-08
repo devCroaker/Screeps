@@ -11,7 +11,7 @@ class Repair extends Creep {
         this.nullTarget();
         let damaged = this.self.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
-                return structure.hits < structure.hitsMax*.75;
+                return ((structure.structureType !== STRUCTURE_WALL && structure.hits < structure.hitsMax) || (structure.structureType === STRUCTURE_WALL && structure.hits < 10000));
             }
         });
 
