@@ -43,8 +43,8 @@ class Runner extends Creep {
         this.nullTarget();
 
         let priorityList = (this.self.room.find(FIND_HOSTILE_CREEPS).length < 1) ? 
-            [STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_CONTAINER,STRUCTURE_STORAGE] : 
-            [STRUCTURE_TOWER,STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_CONTAINER,STRUCTURE_STORAGE];
+            [STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_STORAGE] : 
+            [STRUCTURE_TOWER,STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_STORAGE];
             
         for (let priority of priorityList) {
             this.target = this.self.pos.findClosestByPath(FIND_STRUCTURES, {

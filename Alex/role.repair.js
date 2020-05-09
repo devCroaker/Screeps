@@ -12,7 +12,7 @@ class Repair extends Creep {
         let damaged = this.self.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 let isFortification = (structure.structureType === STRUCTURE_WALL || structure.structureType === STRUCTURE_RAMPART);
-                return ((!isFortification && structure.hits < structure.hitsMax) || (isFortification && structure.hits < 10000));
+                return ((!isFortification && structure.hits < structure.hitsMax*.75) || (isFortification && structure.hits < 10000));
             }
         });
 
@@ -23,10 +23,19 @@ class Repair extends Creep {
 
     findResource() {
         this.nullTarget();
-        this.target = this.self.room.storage;
 
-        if (this.target.store.getUsedCapacity(RESOURCE_ENERGY) < this.self.store.getFreeCapacity(RESOURCE_ENERGY)) {
-            super.findResource();
+        this.target = this.self.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (struct) => {
+                return struct.structureType === STRUCTURE_CONTAINER && struct.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
+            }
+        });
+
+        if (!this.target) {
+            this.target = this.self.room.storage;
+
+            if (this.target.store.getUsedCapacity(RESOURCE_ENERGY) < this.self.store.getFreeCapacity(RESOURCE_ENERGY)) {
+                super.findResource();
+            }
         }
     }
 

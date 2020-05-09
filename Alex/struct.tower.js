@@ -27,7 +27,7 @@ class StructTower extends Entity {
         let damaged = this.self.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
                 let isFortification = (structure.structureType === STRUCTURE_WALL || structure.structureType === STRUCTURE_RAMPART);
-                return ((!isFortification && structure.hits < structure.hitsMax) || (isFortification && structure.hits < 10000));
+                return ((!isFortification && structure.hits < structure.hitsMax/2) || (isFortification && structure.hits < 10000));
             }
         });
 

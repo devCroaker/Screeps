@@ -33,7 +33,7 @@ module.exports.loop = () => {
                             memory: {
                                 role: 'scout',
                                 flag: flag.name,
-                                spawn: spawn.id
+                                spawn: spawn.name
                             }
                         });
                     }           
