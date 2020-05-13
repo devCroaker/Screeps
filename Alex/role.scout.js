@@ -14,15 +14,15 @@ class Scout extends Creep {
                 let spawn = Game.spawns[this.memory.spawn];
 
                 if (!spawn.spawning && spawn.store.getUsedCapacity(RESOURCE_ENERGY) > 50) {
-                    let replace = spawn.spawnCreep([MOVE], 'scout'+ Game.time.toString(),{
+                    /*let replace = spawn.spawnCreep([MOVE], 'scout'+ Game.time.toString(),{
                         memory: {
                             role: 'scout',
                             flag: this.memory.flag.name,
                             spawn: spawn.name
                         }
-                    });
+                    });*/
 
-                    if (replace === 0) this.memory.replaced = true; 
+                    //if (replace === 0) this.memory.replaced = true; 
                 }
             } catch(err) {
                 console.log(err);

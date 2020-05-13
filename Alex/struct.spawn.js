@@ -5,7 +5,7 @@ class StructSpawn extends Entity {
     constructor(self) {
         super(self);
 
-        this.runnerFactor = 2;
+        this.runnerFactor = 3;
         this.maxBuilders = 2;
         this.maxRepairs = 2;
         this.maxUpgraders = 2;
@@ -15,7 +15,8 @@ class StructSpawn extends Entity {
             body: [],
             memory: {
                 role: null,
-                home: this.self.room.id
+                home: this.self.room.id,
+                spawn: this.self.id
             }
         };
 
@@ -27,6 +28,7 @@ class StructSpawn extends Entity {
         this._builders = _.filter(Game.creeps, creep => creep.memory.role === 'builder');
         this._repairs = _.filter(Game.creeps, creep => creep.memory.role === 'repair');
         this._upgraders = _.filter(Game.creeps, creep => creep.memory.role === 'upgrader');
+        this._linkManager = _.filter(Game.creeps, creep => creep.memory.role === 'linkManager');
     }
 
     get creep() {
@@ -93,6 +95,14 @@ class StructSpawn extends Entity {
         this._upgraders = upgraders;
     }
 
+    get linkManager() {
+        return this._linkManager;
+    }
+
+    set linkManager(linkManager) {
+        this._linkManager = linkManager;
+    }
+
     buildCreep() {
 
         this.creep.name = this.creep.memory.role + Game.time.toString();
@@ -126,6 +136,9 @@ class StructSpawn extends Entity {
                     if (this.creep.body.length >= 15) break;
                 }
                 break;
+            case 'linkManager':
+                this.creep.body.push(CARRY,CARRY,CARRY,CARRY);
+                break;
             default:
                 this.creep.body.unshift(WORK,CARRY);
                 break;
@@ -145,9 +158,32 @@ class StructSpawn extends Entity {
             this.creep.memory.role = 'repair';
         } else if (this.upgraders.length < this.maxUpgraders) {
             this.creep.memory.role = 'upgrader';
+        } else if (this.self.room.find(FIND_MY_STRUCTURES, { filter: (struct) => {return struct.structureType === STRUCTURE_LINK;}}).length > 0 && this.linkManager.length < 1) {
+            this.creep.memory.role = 'linkManager';
         }
 
         if (this.creep.memory.role) this.buildCreep();
+
+    }
+
+    manageLink() {
+
+        let link = this.self.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            filter: (struct) => {
+                return struct.structureType === STRUCTURE_LINK;
+            }
+        });
+
+        if (link.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+
+            let target = link.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                filter: (struct) => {
+                    return struct.structureType === STRUCTURE_LINK && struct.id !== link.id;
+                }
+            });
+
+            link.transferEnergy(target);
+        }
 
     }
 
@@ -169,11 +205,13 @@ class StructSpawn extends Entity {
     run() {
         if (!this.self.spawning) {
             this.updateSources();
-            if (this.self.room.energyAvailable >= 650 || (this.self.room.energyAvailable >= 300 && this.self.minersWork < this.sources.length*5)) {
+            if (this.self.room.energyAvailable >= 300) {
                 this.getNextCreep();
                 if (this.creep.name) this.spawn();
             }
         }
+
+        this.manageLink();
     }
     
     spawn() {

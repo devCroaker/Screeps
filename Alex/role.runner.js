@@ -23,18 +23,18 @@ class Runner extends Creep {
         if (this.source) {
             let source = Game.getObjectById(this.source);
             
-            this.target = source.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
-                filter: (resource) => {
-                    return resource.amount >= 50;
-                }
-            });
+            this.target = source.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+
+            if (!this.target) {
+                this.target = source.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (struct) => {
+                        return struct.structureType === STRUCTURE_CONTAINER;
+                    }
+                });
+            }
 
         } else {
-            this.target = this.self.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
-                filter: (resource) => {
-                    return resource.amount >= this.self.carryCapacity;
-                }
-            });
+            this.target = this.self.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
         }
 
     }
@@ -43,7 +43,7 @@ class Runner extends Creep {
         this.nullTarget();
 
         let priorityList = (this.self.room.find(FIND_HOSTILE_CREEPS).length < 1) ? 
-            [STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_STORAGE] : 
+            [STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_TOWER,STRUCTURE_STORAGE]: 
             [STRUCTURE_TOWER,STRUCTURE_SPAWN,STRUCTURE_EXTENSION,STRUCTURE_STORAGE];
             
         for (let priority of priorityList) {

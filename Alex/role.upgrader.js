@@ -8,10 +8,10 @@ class Upgrader extends Creep {
 
     findResource() {
         this.nullTarget();
-        
-        this.target = this.self.pos.findClosestByPath(FIND_STRUCTURES, {
+
+        this.target = this.self.room.controller.pos.findClosestByPath(FIND_MY_STRUCTURES, {
             filter: (struct) => {
-                return struct.structureType === STRUCTURE_CONTAINER && struct.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
+                return struct.structureType === STRUCTURE_LINK && struct.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
             }
         });
 

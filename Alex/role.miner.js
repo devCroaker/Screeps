@@ -6,6 +6,7 @@ class Miner extends Creep {
         super(self);
 
         this.memory.source = (this.memory.source) ? this.memory.source : null;
+        this.container = (this.memory.container) ? this.memory.container : null;
     }
 
     get source() {
@@ -16,10 +17,24 @@ class Miner extends Creep {
         this.memory.source = source;
     }
 
+    get container() {
+        return this.memory.container;
+    }
+
+    set container(container) {
+        this.memory.container = container;
+    }
+
     findSource() {
         if (!this.source) super.findSource();
 
         this.target = Game.getObjectById(this.source);
+
+        this.container = this.target.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (struct) => {
+                return struct.structureType === STRUCTURE_CONTAINER && struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+        });
     }
 
     gather() {
