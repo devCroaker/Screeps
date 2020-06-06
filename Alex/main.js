@@ -9,7 +9,7 @@ const Repair = require('role.repair');
 const Upgrader = require('role.upgrader');
 
 const Scout = require('role.scout');
-const linkManager = require('role.linkManager');
+const LinkManager = require('role.linkManager');
 
 module.exports.loop = () => {
     
@@ -83,7 +83,7 @@ module.exports.loop = () => {
             } else if(creep.memory.role == 'scout') {
                 creep = new Scout(creep);
             } else if(creep.memory.role == 'linkManager') {
-                creep = new linkManager(creep);
+                creep = new LinkManager(creep);
             } else {
                 creep = new Screep(creep);
             }

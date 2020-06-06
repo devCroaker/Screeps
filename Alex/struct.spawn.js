@@ -8,7 +8,7 @@ class StructSpawn extends Entity {
         this.runnerFactor = 3;
         this.maxBuilders = 2;
         this.maxRepairs = 2;
-        this.maxUpgraders = 2;
+        this.maxUpgraders = 4;
 
         this._creep = {
             name: null,
@@ -174,7 +174,7 @@ class StructSpawn extends Entity {
             }
         });
 
-        if (link.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
+        if (link && link.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
 
             let target = link.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                 filter: (struct) => {
@@ -220,7 +220,7 @@ class StructSpawn extends Entity {
             return;
         }
 
-        console.log(`${this.self.room.storage.store.getUsedCapacity(RESOURCE_ENERGY)} energy stored`)
+        if (this.self.room.storage) console.log(`${this.self.room.storage.store.getUsedCapacity(RESOURCE_ENERGY)} energy stored`)
         console.log(`${this.miners.length} miners, ${this.runners.length} runners, ${this.builders.length} builders, ${this.repairs.length} repairs, ${this.upgraders.length} upgraders`);
         let spawn = this.self.spawnCreep(this.creep.body, this.creep.name, {memory: this.creep.memory});
         if (spawn === 0) console.log(`Spawning Creep: ${this.creep.name}`);

@@ -1,6 +1,6 @@
 const Creep = require('class.creep');
 
-class linkManager extends Creep {
+class LinkManager extends Creep {
 
     constructor(self) {
         super(self);
@@ -34,4 +34,4 @@ class linkManager extends Creep {
 
 }
 
-module.exports = linkManager;
+module.exports = LinkManager;
